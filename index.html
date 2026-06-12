@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Taller TCO — Catosa | ¿Cuánto te cuesta cada kilómetro realmente?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ─── RESET & BASE ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0A1628;
+    color: #F0EDE8;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── TOKENS ─── */
+  :root {
+    --amber: #E8820C;
+    --navy: #0A1628;
+    --navy-2: #0F1F38;
+    --cream: #F0EDE8;
+    --steel: #8A9BB0;
+    --border: rgba(240,237,232,0.1);
+    --border-mid: rgba(240,237,232,0.18);
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(10,22,40,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: .05em;
+    color: var(--cream);
+    text-decoration: none;
+  }
+  .logo span { color: var(--amber); }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    font-size: 13px;
+    color: var(--steel);
+    text-decoration: none;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--cream); }
+  .btn-primary {
+    background: var(--amber);
+    color: var(--navy);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .88; }
+
+  /* ─── HERO ─── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 61px);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .hero-left {
+    padding: 72px 48px 72px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: .12em;
+    color: var(--amber);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 64px;
+    line-height: 1.0;
+    color: var(--cream);
+    margin-bottom: 24px;
+  }
+  h1 em { color: var(--amber); font-style: normal; }
+  .hero-sub {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--steel);
+    max-width: 380px;
+    margin-bottom: 36px;
+  }
+  .iceberg-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 40px;
+  }
+  .ice-card {
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 14px;
+    flex: 1;
+    text-align: center;
+  }
+  .ice-pct {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    color: var(--amber);
+    line-height: 1;
+  }
+  .ice-label {
+    font-size: 11px;
+    color: var(--steel);
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  /* ─── HERO RIGHT / CALC ─── */
+  .hero-right {
+    background: rgba(255,255,255,0.03);
+    border-left: 0.5px solid var(--border);
+    padding: 48px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .calc-title {
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .field-group { margin-bottom: 16px; }
+  .field-label {
+    font-size: 11px;
+    color: var(--steel);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .calc-input {
+    background: rgba(255,255,255,0.07);
+    border: 0.5px solid var(--border-mid);
+    border-radius: 4px;
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 10px 12px;
+    width: 100%;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .calc-input:focus { border-color: var(--amber); }
+  .unit-tag { font-size: 12px; color: var(--steel); white-space: nowrap; }
+  .calc-divider { height: 0.5px; background: var(--border); margin: 20px 0; }
+  .result-label {
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--steel);
+    margin-bottom: 8px;
+  }
+  .result-big {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 52px;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .result-sub { font-size: 12px; color: var(--steel); margin-bottom: 16px; }
+  .breakdown { margin-bottom: 20px; }
+  .br-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid rgba(240,237,232,0.06);
+  }
+  .br-label { color: var(--steel); }
+  .br-val { color: var(--cream); font-weight: 500; }
+  .br-val.good { color: #5CC98A; }
+  .btn-calc {
+    background: var(--amber);
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity .2s;
+  }
+  .btn-calc:hover { opacity: .88; }
+
+  /* ─── SECTION WRAPPER ─── */
+  section { max-width: 1280px; margin: 0 auto; }
+
+  /* ─── PROOF STRIP ─── */
+  .proof {
+    padding: 64px 48px;
+    border-top: 0.5px solid var(--border);
+  }
+  .proof-eyebrow {
+    font-size: 11px;
+    letter-spacing: .12em;
+    color: var(--amber);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 36px;
+  }
+  .proof-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .proof-card {
+    background: rgba(255,255,255,0.03);
+    border: 0.5px solid var(--border);
+    border-radius: 6px;
+    padding: 28px 22px;
+  }
+  .proof-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 40px;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .proof-desc { font-size: 13px; color: var(--steel); line-height: 1.55; }
+
+  /* ─── HOW IT WORKS ─── */
+  .how {
+    padding: 64px 48px;
+    border-top: 0.5px solid var(--border);
+    background: rgba(255,255,255,0.015);
+  }
+  .how h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    color: var(--cream);
+    margin-bottom: 40px;
+  }
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+  .how-step {
+    padding-right: 36px;
+    border-right: 0.5px solid var(--border);
+  }
+  .how-step:last-child { border-right: none; padding-right: 0; padding-left: 36px; }
+  .how-step:nth-child(2) { padding: 0 36px; }
+  .step-marker {
+    width: 30px;
+    height: 30px;
+    background: var(--amber);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    margin-bottom: 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .how-step h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--cream);
+    margin-bottom: 10px;
+  }
+  .how-step p { font-size: 13px; color: var(--steel); line-height: 1.65; }
+
+  /* ─── TCO BREAKDOWN ─── */
+  .tco-breakdown {
+    padding: 64px 48px;
+    border-top: 0.5px solid var(--border);
+  }
+  .tco-breakdown h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 36px;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+  .tco-breakdown .sub { font-size: 14px; color: var(--steel); margin-bottom: 36px; }
+  .tco-bars { display: flex; flex-direction: column; gap: 10px; max-width: 680px; }
+  .tco-bar-row { display: flex; align-items: center; gap: 14px; }
+  .tco-bar-label { font-size: 13px; color: var(--steel); width: 200px; flex-shrink: 0; text-align: right; }
+  .tco-bar-track { flex: 1; background: rgba(255,255,255,0.06); border-radius: 2px; height: 10px; }
+  .tco-bar-fill { height: 100%; border-radius: 2px; background: var(--amber); transition: width .6s ease; }
+  .tco-bar-fill.highlight { background: var(--amber); }
+  .tco-bar-fill.dim { background: rgba(232,130,12,0.35); }
+  .tco-bar-pct { font-size: 12px; color: var(--cream); font-weight: 500; width: 36px; }
+
+  /* ─── FOOTER CTA ─── */
+  .footer-cta {
+    padding: 80px 48px;
+    text-align: center;
+    border-top: 0.5px solid var(--border);
+  }
+  .footer-cta h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 44px;
+    color: var(--cream);
+    margin-bottom: 14px;
+  }
+  .footer-cta p { font-size: 15px; color: var(--steel); margin-bottom: 32px; }
+  .cities {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 32px;
+  }
+  .city-tag {
+    font-size: 11px;
+    color: var(--steel);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .city-dot { width: 5px; height: 5px; background: var(--amber); border-radius: 50%; }
+
+  /* ─── MODAL OVERLAY ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5,12,24,0.85);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: #0F1F38;
+    border: 0.5px solid var(--border-mid);
+    border-radius: 10px;
+    padding: 40px 40px;
+    max-width: 540px;
+    width: 100%;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--steel);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-close:hover { color: var(--cream); }
+  .modal-eyebrow {
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .modal h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--cream);
+    margin-bottom: 6px;
+  }
+  .modal-sub { font-size: 13px; color: var(--steel); margin-bottom: 28px; line-height: 1.5; }
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    color: var(--steel);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .form-input, .form-select {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 0.5px solid var(--border-mid);
+    border-radius: 4px;
+    color: var(--cream);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color .2s;
+    appearance: none;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--amber); }
+  .form-select option { background: #0F1F38; color: var(--cream); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .btn-submit {
+    background: var(--amber);
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 16px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+    transition: opacity .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-submit:hover { opacity: .88; }
+  .btn-submit:disabled { opacity: .5; cursor: not-allowed; }
+  .form-disclaimer {
+    font-size: 11px;
+    color: var(--steel);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .success-msg {
+    display: none;
+    text-align: center;
+    padding: 24px 0;
+  }
+  .success-msg .check {
+    font-size: 48px;
+    color: var(--amber);
+    margin-bottom: 16px;
+  }
+  .success-msg h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--cream);
+    margin-bottom: 10px;
+  }
+  .success-msg p { font-size: 14px; color: var(--steel); line-height: 1.6; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links a { display: none; }
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 48px 24px 32px; }
+    h1 { font-size: 48px; }
+    .hero-right { border-left: none; border-top: 0.5px solid var(--border); padding: 32px 24px; }
+    .proof-grid { grid-template-columns: 1fr 1fr; }
+    .how-steps { grid-template-columns: 1fr; gap: 32px; }
+    .how-step, .how-step:last-child, .how-step:nth-child(2) { padding: 0; border-right: none; }
+    .proof, .how, .tco-breakdown, .footer-cta { padding: 48px 24px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 28px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">CATO<span>SA</span></a>
+  <div class="nav-links">
+    <a href="#que-es">¿Qué es el TCO?</a>
+    <a href="#como">El taller</a>
+    <a href="#registro" class="btn-primary" onclick="openModal()">Agendar sesión</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div style="border-bottom: 0.5px solid var(--border);">
+  <div class="hero">
+    <div class="hero-left">
+      <p class="eyebrow">Taller TCO para flotilleros — Norte de México</p>
+      <h1>El precio<br>del camión<br>es solo el<br><em>20%.</em></h1>
+      <p class="hero-sub">El 80% del costo está debajo de la superficie: combustible, mantenimiento, financiamiento, seguros. En el Taller TCO de Catosa calculamos ese 80% contigo, con tus números reales.</p>
+      <button class="btn-primary" onclick="openModal()">
+        Reservar mi lugar en el taller
+      </button>
+      <div class="iceberg-row">
+        <div class="ice-card">
+          <div class="ice-pct">34%</div>
+          <div class="ice-label">del TCO es<br>combustible y DEF</div>
+        </div>
+        <div class="ice-card">
+          <div class="ice-pct">+8%</div>
+          <div class="ice-label">rendimiento<br>con motor S13</div>
+        </div>
+        <div class="ice-card">
+          <div class="ice-pct">62%</div>
+          <div class="ice-label">del TCO donde<br>Catosa impacta</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <p class="calc-title">Estima tu ahorro en 5 años</p>
+
+      <div class="field-group">
+        <label class="field-label" for="c-units">Unidades en tu flota</label>
+        <div class="field-row">
+          <input class="calc-input" type="number" id="c-units" value="10" min="1" />
+          <span class="unit-tag">camiones</span>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="c-km">Km anuales por unidad</label>
+        <div class="field-row">
+          <input class="calc-input" type="number" id="c-km" value="150000" step="5000" />
+          <span class="unit-tag">km/año</span>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="c-rc">Rendimiento actual de combustible</label>
+        <div class="field-row">
+          <input class="calc-input" type="number" id="c-rc" value="3.0" step="0.1" />
+          <span class="unit-tag">km/l</span>
+        </div>
+      </div>
+
+      <div class="form-grid" style="margin-bottom:16px;">
+        <div class="field-group" style="margin:0;">
+          <label class="field-label" for="c-pd">Precio diésel</label>
+          <div class="field-row">
+            <input class="calc-input" type="number" id="c-pd" value="25" step="0.5" />
+            <span class="unit-tag">$/l</span>
+          </div>
+        </div>
+        <div class="field-group" style="margin:0;">
+          <label class="field-label" for="c-def">Precio DEF (urea)</label>
+          <div class="field-row">
+            <input class="calc-input" type="number" id="c-def" value="18" step="0.5" />
+            <span class="unit-tag">$/l</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-divider"></div>
+
+      <p class="result-label">Ahorro estimado — combustible y DEF</p>
+      <p class="result-big" id="r-ahorro">—</p>
+      <p class="result-sub" id="r-sub">en 5 años con tu flota</p>
+
+      <div class="breakdown">
+        <div class="br-row"><span class="br-label">Costo actual por km</span><span class="br-val" id="r-cpm-old">—</span></div>
+        <div class="br-row"><span class="br-label">Costo con LT S13 por km</span><span class="br-val good" id="r-cpm-new">—</span></div>
+        <div class="br-row"><span class="br-label">Ahorro anual por unidad</span><span class="br-val good" id="r-anual">—</span></div>
+        <div class="br-row"><span class="br-label">Ahorro total flota (5 años)</span><span class="br-val good" id="r-total5">—</span></div>
+      </div>
+
+      <button class="btn-calc" onclick="openModal()">
+        Quiero mi análisis TCO completo →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PROOF STRIP -->
+<section>
+  <div class="proof" id="que-es">
+    <p class="proof-eyebrow">Por qué el TCO cambia la conversación</p>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <p class="proof-num">+8%</p>
+        <p class="proof-desc">mejora en rendimiento de combustible con el tren motriz integrado S13 de International</p>
+      </div>
+      <div class="proof-card">
+        <p class="proof-num">$986K</p>
+        <p class="proof-desc">ahorro por unidad vs Cascadia DD13 en 5 años, según calculadora oficial de International</p>
+      </div>
+      <div class="proof-card">
+        <p class="proof-num">3 hrs</p>
+        <p class="proof-desc">dura el taller. Sales con un reporte impreso con los números reales de tu flota</p>
+      </div>
+      <div class="proof-card">
+        <p class="proof-num">100%</p>
+        <p class="proof-desc">gratuito y sin compromiso. Si los números no dan, te lo decimos nosotros primero</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TCO BREAKDOWN -->
+<section>
+  <div class="tco-breakdown">
+    <h2>Dónde va el dinero de tu flota</h2>
+    <p class="sub">Estimación del TCO de un tractocamión en México a 5 años / 750,000 km (referencia International)</p>
+    <div class="tco-bars">
+      <div class="tco-bar-row"><span class="tco-bar-label">Combustible y DEF</span><div class="tco-bar-track"><div class="tco-bar-fill highlight" style="width:34%"></div></div><span class="tco-bar-pct">34%</span></div>
+      <div class="tco-bar-row"><span class="tco-bar-label">Peajes</span><div class="tco-bar-track"><div class="tco-bar-fill highlight" style="width:23%"></div></div><span class="tco-bar-pct">23%</span></div>
+      <div class="tco-bar-row"><span class="tco-bar-label">Salario del operador</span><div class="tco-bar-track"><div class="tco-bar-fill dim" style="width:11%"></div></div><span class="tco-bar-pct">11%</span></div>
+      <div class="tco-bar-row"><span class="tco-bar-label">Depreciación</span><div class="tco-bar-track"><div class="tco-bar-fill highlight" style="width:9%"></div></div><span class="tco-bar-pct">9%</span></div>
+      <div class="tco-bar-row"><span class="tco-bar-label">Financiamiento</span><div class="tco-bar-track"><div class="tco-bar-fill highlight" style="width:8%"></div></div><span class="tco-bar-pct">8%</span></div>
+      <div class="tco-bar-row"><span class="tco-bar-label">Seguro</span><div class="tco-bar-track"><div class="tco-bar-fill highlight" style="width:5%"></div></div><span class="tco-bar-pct">5%</span></div>
+      <div class="tco-bar-row"><span class="tco-bar-label">Mantenimiento</span><div class="tco-bar-track"><div class="tco-bar-fill highlight" style="width:5%"></div></div><span class="tco-bar-pct">5%</span></div>
+      <div class="tco-bar-row"><span class="tco-bar-label">Otros</span><div class="tco-bar-track"><div class="tco-bar-fill dim" style="width:5%"></div></div><span class="tco-bar-pct">5%</span></div>
+    </div>
+    <p style="font-size:12px;color:var(--steel);margin-top:20px;">Las barras naranjas sólidas representan los conceptos donde Catosa tiene impacto directo (62% del total).</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="how" id="como">
+    <h2>Así funciona el taller</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="step-marker">1</div>
+        <h3>Traes tus datos</h3>
+        <p>Consumo de diésel, rutas, costos de mantenimiento, salario de operadores y antigüedad de tu flota. Nada más.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-marker">2</div>
+        <h3>Simulamos juntos</h3>
+        <p>Usamos la calculadora TCO oficial de International para comparar tu flota actual contra unidades nuevas con tren motriz integrado S13. Tus rutas, tus números.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-marker">3</div>
+        <h3>Te vas con el reporte</h3>
+        <p>Un análisis financiero completo: combustible, mantenimiento, financiamiento y valor de reventa. Impreso, tuyo, sin condiciones.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<section>
+  <div class="footer-cta" id="registro">
+    <h2>Agenda tu sesión privada</h2>
+    <p>Sesiones de 3 horas en nuestras instalaciones. Cupo limitado por fecha.<br>Para dueños y gerentes de flotas del norte de México.</p>
+    <button class="btn-primary" style="margin: 0 auto; font-size: 15px; padding: 14px 32px;" onclick="openModal()">
+      Reservar mi lugar — es gratis
+    </button>
+    <div class="cities">
+      <div class="city-tag"><div class="city-dot"></div>Torreón</div>
+      <div class="city-tag"><div class="city-dot"></div>Chihuahua</div>
+      <div class="city-tag"><div class="city-dot"></div>Monterrey</div>
+      <div class="city-tag"><div class="city-dot"></div>Culiacán</div>
+      <div class="city-tag"><div class="city-dot"></div>Hermosillo</div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">✕</button>
+
+    <div id="form-content">
+      <p class="modal-eyebrow">Taller TCO — Catosa</p>
+      <h2>Reserva tu lugar</h2>
+      <p class="modal-sub">Sin costo. Sin compromiso. Cupo limitado por sesión.<br>Te contactaremos para confirmar fecha y ciudad.</p>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="f-nombre">Nombre completo *</label>
+          <input class="form-input" type="text" id="f-nombre" placeholder="Juan Rodríguez" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-empresa">Empresa / Razón social *</label>
+          <input class="form-input" type="text" id="f-empresa" placeholder="Transportes XYZ" required />
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="f-tel">Teléfono / WhatsApp *</label>
+          <input class="form-input" type="tel" id="f-tel" placeholder="871 123 4567" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-email">Correo electrónico *</label>
+          <input class="form-input" type="email" id="f-email" placeholder="juan@empresa.com" required />
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="f-ciudad">Ciudad *</label>
+          <select class="form-select" id="f-ciudad" required>
+            <option value="">Selecciona...</option>
+            <option>Torreón</option>
+            <option>Chihuahua</option>
+            <option>Monterrey</option>
+            <option>Culiacán</option>
+            <option>Hermosillo</option>
+            <option>Otra</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="f-flota">Tamaño de flota</label>
+          <select class="form-select" id="f-flota">
+            <option value="">Selecciona...</option>
+            <option>1 – 5 unidades</option>
+            <option>6 – 15 unidades</option>
+            <option>16 – 30 unidades</option>
+            <option>31 – 50 unidades</option>
+            <option>Más de 50 unidades</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="f-marca">Marca actual de camiones</label>
+        <select class="form-select" id="f-marca">
+          <option value="">Selecciona...</option>
+          <option>International</option>
+          <option>Freightliner / Cascadia</option>
+          <option>Kenworth</option>
+          <option>Scania</option>
+          <option>Volvo</option>
+          <option>Peterbilt</option>
+          <option>Mixta / Varias marcas</option>
+          <option>Otra</option>
+        </select>
+      </div>
+
+      <button class="btn-submit" id="btn-submit" onclick="submitForm()">
+        <span id="btn-text">Confirmar mi registro →</span>
+      </button>
+      <p class="form-disclaimer">Al registrarte aceptas que Catosa te contacte para confirmar tu lugar. Tus datos no se compartirán con terceros.</p>
+    </div>
+
+    <div class="success-msg" id="success-msg">
+      <div class="check">✓</div>
+      <h3>¡Registro recibido!</h3>
+      <p>Un asesor de Catosa se pondrá en contacto contigo en las próximas 24 horas para confirmar fecha y sede de tu taller TCO.<br><br>Prepara: consumo de diésel, km mensuales y costos de mantenimiento aproximados.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── CALCULADORA TCO ───
+  const fmt = v => new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}).format(v);
+  const fmtDec = v => '$' + v.toFixed(2);
+
+  function calcTCO() {
+    const units = parseFloat(document.getElementById('c-units').value) || 0;
+    const km    = parseFloat(document.getElementById('c-km').value)    || 0;
+    const rc    = parseFloat(document.getElementById('c-rc').value)    || 1;
+    const pd    = parseFloat(document.getElementById('c-pd').value)    || 0;
+    const pdef  = parseFloat(document.getElementById('c-def').value)   || 0;
+    const pctDEF = 0.05;
+    const mejora = 0.08; // +8% rendimiento S13
+    const rc_new = rc * (1 + mejora);
+    const años = 5;
+
+    // Fórmulas del PDF de International
+    const cc_old = (km * pd) / rc;
+    const cc_new = (km * pd) / rc_new;
+    const cd_old = (km * pdef * pctDEF) / (rc * 100);
+    const cd_new = (km * pdef * pctDEF) / (rc_new * 100);
+
+    const total_old = cc_old + cd_old;
+    const total_new = cc_new + cd_new;
+    const cpm_old   = total_old / km;
+    const cpm_new   = total_new / km;
+    const ahorro_anual = (total_old - total_new);
+    const ahorro_total = ahorro_anual * units * años;
+
+    document.getElementById('r-ahorro').textContent    = fmt(ahorro_total);
+    document.getElementById('r-sub').textContent       = 'en ' + años + ' años con ' + Math.round(units) + ' unidades (solo combustible + DEF)';
+    document.getElementById('r-cpm-old').textContent   = fmtDec(cpm_old) + ' /km';
+    document.getElementById('r-cpm-new').textContent   = fmtDec(cpm_new) + ' /km';
+    document.getElementById('r-anual').textContent     = fmt(ahorro_anual) + ' /año';
+    document.getElementById('r-total5').textContent    = fmt(ahorro_total);
+  }
+
+  ['c-units','c-km','c-rc','c-pd','c-def'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calcTCO);
+  });
+  calcTCO();
+
+  // ─── MODAL ───
+  function openModal() {
+    document.getElementById('modal-overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ─── FORM SUBMIT → GOOGLE SHEETS ───
+  // INSTRUCCIÓN: Reemplaza la URL de abajo con la URL de tu Google Apps Script
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyrjZ236R_fanvG0l4Lw41La0-QLXOQixYtI6gFaq5KvWY5cwprWsztsWSUcf3I4G7I/exec';
+
+  async function submitForm() {
+    const nombre  = document.getElementById('f-nombre').value.trim();
+    const empresa = document.getElementById('f-empresa').value.trim();
+    const tel     = document.getElementById('f-tel').value.trim();
+    const email   = document.getElementById('f-email').value.trim();
+    const ciudad  = document.getElementById('f-ciudad').value;
+
+    if (!nombre || !empresa || !tel || !email || !ciudad) {
+      alert('Por favor llena los campos obligatorios (*).');
+      return;
+    }
+
+    const btn = document.getElementById('btn-submit');
+    const btnText = document.getElementById('btn-text');
+    btn.disabled = true;
+    btnText.textContent = 'Enviando...';
+
+    const payload = {
+      nombre,
+      empresa,
+      telefono: tel,
+      email,
+      ciudad,
+      flota:    document.getElementById('f-flota').value,
+      marca:    document.getElementById('f-marca').value,
+      fecha:    new Date().toLocaleString('es-MX', {timeZone:'America/Monterrey'}),
+      // datos de la calculadora (si el usuario los usó)
+      calc_unidades:   document.getElementById('c-units').value,
+      calc_km_anuales: document.getElementById('c-km').value,
+      calc_rendimiento: document.getElementById('c-rc').value,
+    };
+
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      // no-cors no devuelve respuesta — asumimos éxito
+      document.getElementById('form-content').style.display = 'none';
+      document.getElementById('success-msg').style.display = 'block';
+    } catch (err) {
+      btn.disabled = false;
+      btnText.textContent = 'Confirmar mi registro →';
+      alert('Ocurrió un error al enviar. Por favor intenta de nuevo o escríbenos por WhatsApp.');
+    }
+  }
+</script>
+</body>
+</html>
